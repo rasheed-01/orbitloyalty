@@ -7,9 +7,10 @@ import Redeem from '../assets/Redeem.svg';
 
 interface LandingPageProps {
   onRoleSelect: (role: 'business' | 'customer') => void;
+  navigateToPage: (page: string) => void; 
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect, navigateToPage }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +43,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect }) => {
           <nav className="hidden md:flex space-x-12 text-sm font-medium text-gray-700">
             <a href="#overview" className="hover:text-black transition">Overview</a>
             <a href="#explore" className="hover:text-black transition">Explore</a>
-            <a href="#business" className="hover:text-black transition">Business</a>
+            <button onClick={() => navigateToPage('business-landing')}
+                className="hover:text-black transition" >
+               Business
+            </button>
           </nav>
 
           {/* Right Side Buttons */}
@@ -177,7 +181,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect }) => {
 
       {/* Why Orbit?*/}
       <section id="whyorbit" className="bg-white py-19 px-6"></section>
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-17 px-6">
         {/* Section Header */}
          <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-black flex justify-center items-center gap-2">
