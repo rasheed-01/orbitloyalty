@@ -5,9 +5,11 @@ import BusinessDashboard from './components/BusinessDashboard';
 import CustomerExplore from './components/CustomerExplore';
 import CustomerDashboard from './components/CustomerDashboard';
 import POSScanner from './components/POSScanner';
+import BusinessLandingPage from './components/BusinessLandingPage';
+
 
 export type UserRole = 'business' | 'customer' | null;
-export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner';
+export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing';
 
 function App() {
   const [userRole, setUserRole] = useState<UserRole>(null);
@@ -30,7 +32,7 @@ function App() {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'landing':
-        return <LandingPage onRoleSelect={handleRoleSelect} />;
+        return <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />
       case 'business-dashboard':
         return (
           <BusinessDashboard
@@ -56,6 +58,8 @@ function App() {
         );
       case 'pos-scanner':
         return <POSScanner onNavigate={navigateToPage} />;
+      case 'business-landing':
+        return <BusinessLandingPage />;
       default:
         return <LandingPage onRoleSelect={handleRoleSelect} />;
     }
