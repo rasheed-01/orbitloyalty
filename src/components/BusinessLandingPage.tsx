@@ -2,15 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import Orbit from '../assets/Orbit.png';
 import OrbitLogo from '../assets/Orbit_Logo.svg';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Gift, QrCode, TrendingUp, Rocket, BarChart3, Repeat, Star, ShieldCheck } from 'lucide-react';
+import { Gift, QrCode, TrendingUp, Rocket, BarChart3, Repeat, Star, ShieldCheck, Menu, X } from 'lucide-react';
 
 
 interface LandingPageProps {
   onRoleSelect: (role: 'business' | 'customer') => void;
+  navigateToPage: (page: string) => void; 
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect, navigateToPage }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -60,71 +62,102 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect }) => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
+  {/* Header */}
+   <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
           {/* Logo */}
           <div className="flex-shrink-0">
             <a href="/LandingPage">
-             <img src={OrbitLogo} alt="Orbit Logo" className="h-10 cursor-pointer" />
+              <img src={OrbitLogo} alt="Orbit Logo" className="h-10 cursor-pointer" />
             </a>
           </div>
 
-          {/* Center Nav */}
+          {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-12 text-sm font-medium text-gray-700">
             <a href="#overview" className="hover:text-black transition">Overview</a>
-            <a href="#explore" className="hover:text-black transition">Explore</a>
-            <a href="#business" className="hover:text-black transition">Business</a>
+            <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
+                Explore
+            </button>
+            <button onClick={() => navigateToPage('business-landing')} className="hover:text-black transition">
+                Business
+            </button>
           </nav>
 
-          {/* Right Side Buttons */}
-            <div className="flex items-center space-x-6 text-sm font-medium relative" ref={dropdownRef}>
-              <a
-                href="#login"
-                className="text-gray-700 hover:text-black transition"
-              >
-                Login
-              </a>
+          {/* Desktop Right Side Buttons */}
+          <div className="hidden md:flex items-center space-x-6 text-sm font-medium relative" ref={dropdownRef}>
+            <a href="#login" className="text-gray-700 hover:text-black transition">
+              Login
+            </a>
 
-              {/* Sign up Button */}
-              <button
-                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                className="px-4 py-2 border-2 rounded-full border-[#FFB000] text-[#FFB000] hover:bg-[#FFB000] hover:text-white transition-all duration-300"
-              >
-                Sign up
-              </button>
+            <button
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+              className="px-4 py-2 border-2 rounded-full border-[#FFB000] text-[#FFB000] hover:bg-[#FFB000] hover:text-white transition-all duration-300"
+            >
+              Sign up
+            </button>
 
-              {/* Dropdown */}
-              {isDropdownOpen && (
-                <div className={`absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50 transform transition-all duration-200 origin-top ${
-                  isDropdownOpen
-                    ? 'scale-100 opacity-100'
-                    : 'scale-95 opacity-0 pointer-events-none'
-                }`} 
-                >
+            {/* Dropdown */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                 <button
-                    onClick={() => { onRoleSelect('customer'); 
-                                     setDropdownOpen(false);}}
-                    className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Customer
-                  </button>
-                  <button
-                    onClick={() => { onRoleSelect('business');  
-                                     setDropdownOpen(false); }}
-                    className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Business
-                  </button>
-                </div>
-              )}
-            </div>
+                  onClick={() => { onRoleSelect('customer'); setDropdownOpen(false); }}
+                  className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Customer
+                </button>
+                <button
+                  onClick={() => { onRoleSelect('business'); setDropdownOpen(false); }}
+                  className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Business
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Hamburger */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="h-6 w-6 text-gray-700" /> : <Menu className="h-6 w-6 text-gray-700" />}
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+       <div className="md:hidden bg-white border-t border-gray-200 px-4 py-6 space-y-4 text-sm font-medium text-gray-700">
+          <a href="#overview" className="block hover:text-black transition">Overview</a>
+          <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
+                Explore
+         </button>
+         <br/>
+         <button onClick={() => navigateToPage('business-landing')} className="hover:text-black transition">
+                Business
+         </button>
+          <a href="#login" className="block hover:text-black transition">Login</a>
+
+          {/* Sign Up with role select */}
+          <div className="border-t border-gray-100 pt-4">
+            <span className="block text-gray-500 text-xs mb-2">Sign up as:</span>
+            <button
+              onClick={() => { onRoleSelect('customer'); setMobileMenuOpen(false); }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Customer
+            </button>
+            <button
+              onClick={() => { onRoleSelect('business'); setMobileMenuOpen(false); }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Business
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
     {/* Hero Section */}
       <section className="relative py-32 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
       {/* Orbit Background behind content block */}

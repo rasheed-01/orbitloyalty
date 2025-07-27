@@ -32,7 +32,7 @@ function App() {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'landing':
-        return <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />
+  return <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />;
       case 'business-dashboard':
         return (
           <BusinessDashboard
@@ -59,9 +59,19 @@ function App() {
       case 'pos-scanner':
         return <POSScanner onNavigate={navigateToPage} />;
       case 'business-landing':
-        return <BusinessLandingPage />;
-      default:
-        return <LandingPage onRoleSelect={handleRoleSelect} />;
+       return (
+          <BusinessLandingPage
+          onRoleSelect={handleRoleSelect}
+          navigateToPage={navigateToPage}
+        />
+        );
+     default:
+       return (
+          <LandingPage
+          onRoleSelect={handleRoleSelect}
+          navigateToPage={navigateToPage}
+          />
+         );
     }
   };
 
