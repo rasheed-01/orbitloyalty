@@ -87,12 +87,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect, navigateToPage 
 
           {/* Desktop Right Side Buttons */}
           <div className="hidden md:flex items-center space-x-6 text-sm font-medium relative" ref={dropdownRef}>
-            <a href="#login" className="text-gray-700 hover:text-black transition">
-              Login
-            </a>
+          <button onClick={() => navigateToPage('login')}>
+               Login
+           </button>
 
-            <button
-              onClick={() => setDropdownOpen(!isDropdownOpen)}
+           <button onClick={() => setDropdownOpen(!isDropdownOpen)}
               className="px-4 py-2 border-2 rounded-full border-[#FFB000] text-[#FFB000] hover:bg-[#FFB000] hover:text-white transition-all duration-300"
             >
               Sign up
@@ -102,13 +101,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect, navigateToPage 
             {isDropdownOpen && (
               <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                 <button
-                  onClick={() => { onRoleSelect('customer'); setDropdownOpen(false); }}
+                  onClick={() => { onRoleSelect('customer'); navigateToPage('signup'); setDropdownOpen(false); }}
                   className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Customer
                 </button>
                 <button
-                  onClick={() => { onRoleSelect('business'); setDropdownOpen(false); }}
+                  onClick={() => { onRoleSelect('business'); navigateToPage('signup'); setDropdownOpen(false); }}
                   className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Business
@@ -129,27 +128,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onRoleSelect, navigateToPage 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-6 space-y-4 text-sm font-medium text-gray-700">
-          <a href="#overview" className="block hover:text-black transition">Overview</a>
-          <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
+         <a href="#overview" className="block hover:text-black transition">Overview</a>
+         <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
                 Explore
          </button>
          <br/>
          <button onClick={() => navigateToPage('business-landing')} className="hover:text-black transition">
                 Business
          </button>
-          <a href="#login" className="block hover:text-black transition">Login</a>
+         <br/>
+         <button onClick={() => navigateToPage('login')}>
+               Login
+          </button>
 
           {/* Sign Up with role select */}
           <div className="border-t border-gray-100 pt-4">
             <span className="block text-gray-500 text-xs mb-2">Sign up as:</span>
             <button
-              onClick={() => { onRoleSelect('customer'); setMobileMenuOpen(false); }}
+              onClick={() => { onRoleSelect('customer'); navigateToPage('signup'); setMobileMenuOpen(false); }}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Customer
             </button>
             <button
-              onClick={() => { onRoleSelect('business'); setMobileMenuOpen(false); }}
+              onClick={() => { onRoleSelect('business'); navigateToPage('signup'); setMobileMenuOpen(false); }}
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Business

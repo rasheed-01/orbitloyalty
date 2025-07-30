@@ -6,10 +6,13 @@ import CustomerExplore from './components/CustomerExplore';
 import CustomerDashboard from './components/CustomerDashboard';
 import POSScanner from './components/POSScanner';
 import BusinessLandingPage from './components/BusinessLandingPage';
+import Login from './components/Login';
+import Signup from './components/Signup';
+
 
 
 export type UserRole = 'business' | 'customer' | null;
-export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing';
+export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing' | 'login' | 'signup';
 
 function App() {
   const [userRole, setUserRole] = useState<UserRole>(null);
@@ -31,47 +34,33 @@ function App() {
 
   const renderCurrentPage = () => {
     switch (currentPage) {
+
       case 'landing':
-  return <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />;
+        return ( <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
+
       case 'business-dashboard':
-        return (
-          <BusinessDashboard
-            onNavigate={navigateToPage}
-            currentUser={currentUser}
-            setCurrentUser={setCurrentUser}
-          />
-        );
+        return ( <BusinessDashboard onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} /> );
+
       case 'customer-explore':
-        return (
-          <CustomerExplore
-            onNavigate={navigateToPage}
-            currentUser={currentUser}
-            setCurrentUser={setCurrentUser}
-          />
-        );
+        return ( <CustomerExplore onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} navigateToPage={navigateToPage} onRoleSelect={handleRoleSelect}/> );
+
       case 'customer-dashboard':
-        return (
-          <CustomerDashboard
-            onNavigate={navigateToPage}
-            currentUser={currentUser}
-          />
-        );
+        return ( <CustomerDashboard onNavigate={navigateToPage} currentUser={currentUser} /> );
+
       case 'pos-scanner':
         return <POSScanner onNavigate={navigateToPage} />;
+
       case 'business-landing':
-       return (
-          <BusinessLandingPage
-          onRoleSelect={handleRoleSelect}
-          navigateToPage={navigateToPage}
-        />
-        );
+       return ( <BusinessLandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
+
+      case 'login':
+       return ( <Login onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
+
+      case 'signup':
+       return ( <Signup userRole={userRole} onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
+
      default:
-       return (
-          <LandingPage
-          onRoleSelect={handleRoleSelect}
-          navigateToPage={navigateToPage}
-          />
-         );
+       return ( <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
     }
   };
 

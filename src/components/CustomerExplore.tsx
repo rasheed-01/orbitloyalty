@@ -1,314 +1,252 @@
-import React, { useState } from 'react';
-import { Search, MapPin, Star, QrCode, ArrowLeft, User, Wallet, Heart, Clock, Gift } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowUpRight, X, Menu, Search } from 'lucide-react';
+import OrbitLogo from '../assets/Orbit_Logo.svg';
+import ProgramPopup from './ProgramPopup';
 
 interface CustomerExploreProps {
   onNavigate: (page: string) => void;
   currentUser: any;
   setCurrentUser: (user: any) => void;
+  navigateToPage: (page: string) => void;
+  onRoleSelect: (role: 'business' | 'customer') => void;
 }
 
-const CustomerExplore: React.FC<CustomerExploreProps> = ({ onNavigate, currentUser, setCurrentUser }) => {
+const CustomerExplore: React.FC<CustomerExploreProps> = ({ onNavigate, currentUser, setCurrentUser, navigateToPage, onRoleSelect }) => {
+  const categories = ['All', 'Cafe', 'Restaurant', 'Retail', 'Beauty & Wellness'];
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [customerData, setCustomerData] = useState({
-    name: '',
-    email: '',
-    phone: ''
-  });
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<any | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const businesses = [
     {
       id: 1,
-      name: 'Cafe Mocha',
-      category: 'Coffee & Bakery',
+      name: 'The Coffee House',
+      category: 'Cafe',
       location: 'Downtown Plaza',
-      rating: 4.8,
-      distance: '0.2 mi',
       image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=400',
-      points: '1 point per $1',
+      points: '5 points per visit',
       reward: 'Free coffee at 100 points',
-      isJoined: false
+      isJoined: false,
+      description: 'Your daily coffee spot with cozy ambiance.',
+      hours: ['6:00 am', '12:00 am']
     },
-    {
-      id: 2,
-      name: 'Fresh Bites',
-      category: 'Restaurant',
-      location: 'Main Street',
-      rating: 4.6,
-      distance: '0.5 mi',
-      image: 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=400',
-      points: '2 points per $1',
-      reward: '$10 off at 200 points',
-      isJoined: false
-    },
-    {
-      id: 3,
-      name: 'Style Studio',
-      category: 'Beauty & Wellness',
-      location: 'Fashion District',
-      rating: 4.9,
-      distance: '0.8 mi',
-      image: 'https://images.pexels.com/photos/1319461/pexels-photo-1319461.jpeg?auto=compress&cs=tinysrgb&w=400',
-      points: '1 point per $2',
-      reward: 'Free treatment at 150 points',
-      isJoined: true
-    },
-    {
-      id: 4,
-      name: 'Tech Haven',
-      category: 'Retail',
-      location: 'Tech Center',
-      rating: 4.7,
-      distance: '1.2 mi',
-      image: 'https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=400',
-      points: '1 point per $3',
-      reward: '5% off at 300 points',
-      isJoined: false
-    }
+    // Add more businesses here...
   ];
 
-  const categories = ['All', 'Coffee & Bakery', 'Restaurant', 'Beauty & Wellness', 'Retail', 'Fitness'];
-
-  const filteredBusinesses = businesses.filter(business => {
-    const matchesSearch = business.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         business.category.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || business.category === selectedCategory;
+  const filteredBusinesses = businesses.filter((biz) => {
+    const matchesSearch =
+      biz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      biz.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || biz.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const handleCustomerRegistration = () => {
-    setIsRegistered(true);
-    setCurrentUser({
-      type: 'customer',
-      ...customerData,
-      id: 'customer_' + Math.random().toString(36).substr(2, 9),
-      qrCode: Math.random().toString(36).substr(2, 12).toUpperCase()
-    });
-  };
-
-  if (!isRegistered) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <button 
-                  onClick={() => onNavigate('landing')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </button>
-                <h1 className="text-2xl font-bold text-gray-900">Customer Registration</h1>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div className="max-w-2xl mx-auto py-12 px-4">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="text-center mb-8">
-              <div className="bg-green-100 p-4 rounded-xl inline-block mb-4">
-                <User className="h-12 w-12 text-green-600" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Join LoyaltyHub</h2>
-              <p className="text-gray-600">Create your account and start earning rewards from local businesses</p>
-            </div>
-
-            <form onSubmit={(e) => { e.preventDefault(); handleCustomerRegistration(); }} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <input
-                  type="text"
-                  value={customerData.name}
-                  onChange={(e) => setCustomerData({...customerData, name: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input
-                  type="email"
-                  value={customerData.email}
-                  onChange={(e) => setCustomerData({...customerData, email: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter your email address"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  value={customerData.phone}
-                  onChange={(e) => setCustomerData({...customerData, phone: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter your phone number"
-                  required
-                />
-              </div>
-
-              <div className="bg-green-50 p-6 rounded-xl">
-                <div className="flex items-center mb-3">
-                  <QrCode className="h-6 w-6 text-green-600 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-900">Your Unique QR Code</h3>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  After registration, you'll receive a unique QR code that links all your loyalty programs. 
-                  This code can be stored in Apple Wallet for easy access.
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-colors"
-              >
-                Create Customer Account
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => onNavigate('landing')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Explore Businesses</h1>
-                <p className="text-gray-600">Find loyalty rewards near you</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => onNavigate('customer-dashboard')}
-                className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-700 transition-colors"
-              >
-                <Wallet className="h-5 w-5" />
-                <span>My Wallet</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+   <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filters */}
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search businesses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
-            </div>
-            <div className="flex space-x-2 overflow-x-auto">
-              {categories.map((category) => (
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <a href="/LandingPage">
+              <img src={OrbitLogo} alt="Orbit Logo" className="h-10 cursor-pointer" />
+            </a>
+          </div>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex space-x-12 text-sm font-medium text-gray-700">
+            <button onClick={() => navigateToPage('landing')} className="hover:text-black transition">
+                Overview
+            </button>
+            <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
+                Explore
+            </button>
+            <button onClick={() => navigateToPage('business-landing')} className="hover:text-black transition">
+                Business
+            </button>
+          </nav>
+
+          {/* Desktop Right Side Buttons */}
+          <div className="hidden md:flex items-center space-x-6 text-sm font-medium relative" ref={dropdownRef}>
+            <button onClick={() => navigateToPage('login')}>
+               Login
+            </button>
+
+            <button
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+              className="px-4 py-2 border-2 rounded-full border-[#FFB000] text-[#FFB000] hover:bg-[#FFB000] hover:text-white transition-all duration-300"
+            >
+              Sign up
+            </button>
+
+            {/* Dropdown */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-14 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                 <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  onClick={() => { onRoleSelect('customer'); navigateToPage('signup'); setDropdownOpen(false); }}
+                  className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
-                  {category}
+                  Customer
                 </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Business Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBusinesses.map((business) => (
-            <div key={business.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              <div className="relative">
-                <img
-                  src={business.image}
-                  alt={business.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute top-4 right-4">
-                  <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
-                    <Heart className="h-5 w-5 text-gray-600" />
-                  </button>
-                </div>
-                <div className="absolute bottom-4 left-4">
-                  <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {business.points}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-bold text-gray-900">{business.name}</h3>
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="ml-1 text-sm font-medium text-gray-600">{business.rating}</span>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 mb-1">{business.category}</p>
-                <div className="flex items-center text-gray-500 text-sm mb-4">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  <span>{business.location} • {business.distance}</span>
-                </div>
-
-                <div className="bg-green-50 p-3 rounded-lg mb-4">
-                  <div className="flex items-center mb-1">
-                    <Gift className="h-4 w-4 text-green-600 mr-2" />
-                    <span className="text-sm font-medium text-green-800">Reward</span>
-                  </div>
-                  <p className="text-sm text-green-700">{business.reward}</p>
-                </div>
-
                 <button
-                  className={`w-full py-3 rounded-xl font-semibold transition-colors ${
-                    business.isJoined
-                      ? 'bg-gray-100 text-gray-600 cursor-default'
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
-                  disabled={business.isJoined}
+                  onClick={() => { onRoleSelect('business'); navigateToPage('signup'); setDropdownOpen(false); }}
+                  className="w-full text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
-                  {business.isJoined ? 'Already Joined' : 'Join Loyalty Program'}
+                  Business
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredBusinesses.length === 0 && (
-          <div className="text-center py-12">
-            <div className="bg-gray-100 p-4 rounded-xl inline-block mb-4">
-              <Search className="h-12 w-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No businesses found</h3>
-            <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+            )}
           </div>
-        )}
+
+          {/* Mobile Hamburger */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="h-6 w-6 text-gray-700" /> : <Menu className="h-6 w-6 text-gray-700" />}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-6 space-y-4 text-sm font-medium text-gray-700">
+           <button onClick={() => navigateToPage('landing')} className="hover:text-black transition">
+                Overview
+          </button>
+          <br/>
+          <button onClick={() => navigateToPage('customer-explore')} className="hover:text-black transition">
+                Explore
+         </button>
+         <br/>
+         <button onClick={() => navigateToPage('business-landing')} className="hover:text-black transition">
+                Business
+         </button>
+         <br/>
+          <button onClick={() => navigateToPage('login')}>
+               Login
+            </button>
+
+          {/* Sign Up with role select */}
+          <div className="border-t border-gray-100 pt-4">
+            <span className="block text-gray-500 text-xs mb-2">Sign up as:</span>
+            <button
+              onClick={() => { onRoleSelect('customer');  navigateToPage('signup'); setMobileMenuOpen(false); }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Customer
+            </button>
+            <button
+              onClick={() => { onRoleSelect('business');  navigateToPage('signup'); setMobileMenuOpen(false); }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Business
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
+
+      {/* Title Section */}
+      <section className="text-center py-12">
+        <h1 className="text-3xl font-semibold">
+          <span className="bg-gradient-to-r from-[#C68900] to-[#FFB000] bg-clip-text text-transparent font-bold">Loyalty</span> in Your Orbit
+        </h1>
+        <p className="text-gray-500 mt-2">Explore loyalty programs from your favorite spots</p>
+      </section>
+
+      {/* Search Bar */}
+      <div className="flex justify-center">
+       <div className="relative w-[90%] sm:w-[%60] md:w-[%40] lg:w-[40%] xl:w-[40%] mb-6">
+        <input
+          type="text"
+          placeholder="Search for cafés, stores, or rewards..."
+          className="w-full border border-[#FFB000] rounded-full py-2 px-4 pl-5 pr-12 focus:outline-none text-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+       <Search className="absolute right-4 top-2.5 h-5 w-5 text-[#FFB000]" />
+       </div>
+     </div>
+
+      {/* Category Filter */}
+      <div className="flex justify-center flex-wrap gap-16 mb-8">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`text-sm font-medium ${selectedCategory === cat ? 'text-[#FFB000] underline' : 'text-gray-700'} hover:text-[#FFB000]`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Business Cards */}
+       <section className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-20">
+         {filteredBusinesses.length === 0 ? (
+        <div className="col-span-full text-center text-gray-500 text-lg font-medium py-16">
+           No programs available
+         </div>
+       ) : (
+         filteredBusinesses.map((biz) => (
+          <div key={biz.id} className="border rounded-lg shadow hover:shadow-md transition overflow-hidden bg-white"
+               onClick={() => setSelectedProgram(biz)}
+           >
+             <div className="relative h-36 overflow-hidden">
+              <img src={biz.image} alt={biz.name} className="w-full h-full object-cover" />
+                <ArrowUpRight className="absolute top-2 right-2 text-white bg-black bg-opacity-30 rounded p-1 h-6 w-6" />
+             </div>
+              <div className="p-3 text-center">
+                <h3 className="text-lg font-semibold text-gray-800">{biz.name}</h3>
+                  <p className="text-sm text-gray-500">{biz.category} · {biz.location}</p>
+                  <p className="text-sm mt-2 text-yellow-600">{biz.points}</p>
+                  <p className="text-xs text-gray-600">{biz.reward}</p>
+               <button className={`mt-3 w-full py-1 border rounded ${biz.isJoined ? 'border-gray-300 text-gray-400 cursor-not-allowed' : 'border-[#FFB000] text-[#FFB000] hover:bg-[#FFB000] hover:text-white transition'}`} 
+                       disabled={biz.isJoined}
+                 >
+                       {biz.isJoined ? 'Joined' : 'Join'}
+               </button>
+             </div>
+            </div>
+       ))
+     )}
+     </section>
+
+      {/* Program Detail Popup */}
+      {selectedProgram && (
+       <ProgramPopup
+        program={selectedProgram}
+        onClose={() => setSelectedProgram(null)}
+        onJoin={() => {
+          if (!currentUser) {
+              onNavigate('login');
+          } else {
+            const updated = businesses.map((biz) =>
+            biz.id === selectedProgram.id ? { ...biz, isJoined: true } : biz
+          );
+        setSelectedProgram(null);
+      }
+    }}
+  />
+)}
     </div>
   );
 };
