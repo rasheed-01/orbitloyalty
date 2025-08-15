@@ -8,25 +8,21 @@ import POSScanner from './components/POSScanner';
 import BusinessLandingPage from './components/BusinessLandingPage';
 import Login from './components/Login';
 import Signup from './components/Signup';
-
+import CustomerTrack from './components/CustomerTrack';
+import CustomerAccount from './components/CustomerAccount';
 
 
 export type UserRole = 'business' | 'customer' | null;
-export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing' | 'login' | 'signup';
+export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing' | 'login' | 'signup' | 'customer-track' | 'customer-account';
 
 function App() {
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [currentPage, setCurrentPage] = useState<CurrentPage>('landing');
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const handleRoleSelect = (role: UserRole) => {
-    setUserRole(role);
-    if (role === 'business') {
-      setCurrentPage('business-dashboard');
-    } else if (role === 'customer') {
-      setCurrentPage('customer-explore');
-    }
-  };
+const handleRoleSelect = (role: UserRole) => {
+  setUserRole(role);
+};
 
   const navigateToPage = (page: CurrentPage) => {
     setCurrentPage(page);
@@ -45,7 +41,7 @@ function App() {
         return ( <CustomerExplore onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} navigateToPage={navigateToPage} onRoleSelect={handleRoleSelect}/> );
 
       case 'customer-dashboard':
-        return ( <CustomerDashboard onNavigate={navigateToPage} currentUser={currentUser} /> );
+        return ( <CustomerDashboard onNavigate={navigateToPage} navigateToPage={navigateToPage} currentUser={currentUser} /> );
 
       case 'pos-scanner':
         return <POSScanner onNavigate={navigateToPage} />;
@@ -58,6 +54,13 @@ function App() {
 
       case 'signup':
        return ( <Signup userRole={userRole} onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
+
+      case 'customer-track':
+       return ( <CustomerTrack userRole={userRole} onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage}/> );
+
+      case 'customer-account':
+       return <CustomerAccount navigateToPage={navigateToPage} onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />;
+
 
      default:
        return ( <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );

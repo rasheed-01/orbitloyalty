@@ -21,22 +21,26 @@ const Signup: React.FC<SignupProps> = ({ userRole, navigateToPage }) => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const newUser = {
-      email,
-      phoneNumber,
-      name,
-      gender: userRole === 'customer' ? gender : undefined,
-      crNumber: userRole === 'business' ? crNumber : undefined,
-      password,
-      role: userRole,
-    };
-
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-
-    navigateToPage('customer-explore');
+  const newUser = {
+    email,
+    phoneNumber,
+    name,
+    gender: userRole === 'customer' ? gender : undefined,
+    crNumber: userRole === 'business' ? crNumber : undefined,
+    password,
+    role: userRole,
   };
+
+  localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+  if (userRole === 'customer') {
+    navigateToPage('customer-dashboard');
+  } else if (userRole === 'business') {
+    navigateToPage('business-dashboard');
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white relative px-4">

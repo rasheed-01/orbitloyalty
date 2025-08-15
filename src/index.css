@@ -16,3 +16,16 @@
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;
 }
+@keyframes wave {
+  0% { transform: rotate(40deg); }
+  10% { transform: rotate(50deg); }
+  20% { transform: rotate(40deg); }
+  30% { transform: rotate(50deg); }
+  40% { transform: rotate(40deg); }
+  100% { transform: rotate(40deg); }
+}
+
+.wave-hand {
+  animation: wave 2s infinite;
+  transform-origin: bottom center;
+}
