@@ -10,10 +10,12 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import CustomerTrack from './components/CustomerTrack';
 import CustomerAccount from './components/CustomerAccount';
-
+import BusinessProfileSetup from './components/BusinessProfileSetup';
+import BusinessPrograms from './components/BusinessPrograms';
+import BusinessAccount from './components/BusinessAccount';
 
 export type UserRole = 'business' | 'customer' | null;
-export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing' | 'login' | 'signup' | 'customer-track' | 'customer-account';
+export type CurrentPage = 'landing' | 'business-dashboard' | 'customer-explore' | 'customer-dashboard' | 'pos-scanner' | 'business-landing' | 'login' | 'signup' | 'customer-track' | 'customer-account'   | 'business-profile-setup' | 'business-programs' | 'business-account';
 
 function App() {
   const [userRole, setUserRole] = useState<UserRole>(null);
@@ -35,7 +37,7 @@ const handleRoleSelect = (role: UserRole) => {
         return ( <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
 
       case 'business-dashboard':
-        return ( <BusinessDashboard onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} /> );
+        return ( <BusinessDashboard onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} navigateToPage={navigateToPage}/> );
 
       case 'customer-explore':
         return ( <CustomerExplore onNavigate={navigateToPage} currentUser={currentUser} setCurrentUser={setCurrentUser} navigateToPage={navigateToPage} onRoleSelect={handleRoleSelect}/> );
@@ -61,7 +63,15 @@ const handleRoleSelect = (role: UserRole) => {
       case 'customer-account':
        return <CustomerAccount navigateToPage={navigateToPage} onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} />;
 
+     case 'business-profile-setup':
+       return <BusinessProfileSetup navigateToPage={navigateToPage} />;
 
+      case 'business-programs':
+        return <BusinessPrograms navigateToPage={navigateToPage} />;
+      
+      case 'business-account':
+        return <BusinessAccount navigateToPage={navigateToPage} />;
+        
      default:
        return ( <LandingPage onRoleSelect={handleRoleSelect} navigateToPage={navigateToPage} /> );
     }
